@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@types/node": "^20.8.10",
+    "dotenv": "^16.3.1",
+    "puppeteer": "^21.5.0"
+  }
+}
