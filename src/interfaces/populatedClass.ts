@@ -1,9 +1,9 @@
-export interface PopulatedClass extends Class{
+export interface PopulatedClass extends Class {
 	tools: ClassTool[]
 }
 export interface Class {
-	id: string,
-	title: string,
+	id: string
+	title: string
 	shortCode: string
 }
 export interface ClassTool {

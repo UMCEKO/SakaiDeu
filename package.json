@@ -1,25 +1,25 @@
 {
   "name": "sakai",
   "license": "MIT",
-  "main": "dist/Sakai.js",
   "version": "0.0.1",
-  "module": "dist/Sakai.mjs",
-  "types": "dist/Sakai.d.ts",
+  "files": ["dist"],
   "author": {
     "name": "Umut Cevdet Koçak",
     "email": "umutcevdetkocak@gmail.com"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts"
+    "build": "rmdir /s /q .\\dist && prettier --write src/ && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs"
   },
   "dependencies": {
-    "@types/node": "^20.8.10",
     "dotenv": "^16.3.1",
     "node-html-parser": "^6.1.12",
     "puppeteer": "^21.5.0"
   },
   "type": "module",
   "devDependencies": {
+    "@types/node": "^20.8.10",
     "@changesets/cli": "^2.27.1"
   }
 }
