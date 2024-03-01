@@ -17,5 +17,8 @@
     "node-html-parser": "^6.1.12",
     "puppeteer": "^21.5.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1"
+  }
 }
