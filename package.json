@@ -1,7 +1,21 @@
 {
+  "name": "sakai",
+  "license": "MIT",
+  "main": "dist/Sakai.js",
+  "module": "dist/Sakai.mjs",
+  "types": "dist/Sakai.d.ts",
+  "author": {
+    "name": "Umut Cevdet Koçak",
+    "email": "umutcevdetkocak@gmail.com"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts"
+  },
   "dependencies": {
     "@types/node": "^20.8.10",
     "dotenv": "^16.3.1",
+    "node-html-parser": "^6.1.12",
     "puppeteer": "^21.5.0"
-  }
+  },
+  "type": "module"
 }

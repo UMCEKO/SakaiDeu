@@ -14,7 +14,9 @@
     "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
-    "allowJs": true
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true
   },
   "exclude": [
     "./node_modules",
