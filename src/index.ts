@@ -1,7 +1,7 @@
 import parse from 'node-html-parser'
 import { LiveLesson } from './interfaces/liveLesson'
 import { Recording } from './interfaces/recording'
-import { Class, ClassTool, PopulatedClass } from './interfaces/populatedClass'
+import { Class } from './classes/class'
 
 class Classes {
 	constructor() {
@@ -40,6 +40,7 @@ export class Sakai {
 	cookie: string | null = null
 	userId: string | undefined
 	classes = new Classes()
+
 	private async getNewCookie() {
 		let data = await fetch('https://online.deu.edu.tr/portal/site', {
 			referrerPolicy: 'strict-origin-when-cross-origin',
@@ -49,27 +50,6 @@ export class Sakai {
 		if (!cookie) throw new Error('No cookies found.')
 		this.cookie = cookie
 		return cookie
-	}
-	async getUserId() {
-		let data = await fetch('https://online.deu.edu.tr/direct/session/current.json?auto=true', {
-			headers: {
-				accept: 'application/json, text/javascript, */*; q=0.01',
-				'accept-language': 'en-US,en;q=0.9',
-				'sec-ch-ua': '"Not A(Brand";v="99", "Opera GX";v="107", "Chromium";v="121"',
-				'sec-ch-ua-mobile': '?0',
-				'sec-ch-ua-platform': '"Windows"',
-				'sec-fetch-dest': 'empty',
-				'sec-fetch-mode': 'cors',
-				'sec-fetch-site': 'same-origin',
-				'x-requested-with': 'XMLHttpRequest',
-				cookie: this.cookie as string,
-				Referer: 'https://online.deu.edu.tr/portal',
-				'Referrer-Policy': 'no-referrer-when-downgrade',
-			},
-			body: null,
-			method: 'GET',
-		})
-		console.log(await data.json())
 	}
 	async login() {
 		await this.getNewCookie()
@@ -90,69 +70,18 @@ export class Sakai {
 		let scr = html.querySelector('script')
 		if (!scr) throw new Error('No script tag.')
 		this.userId = eval(`${scr.innerText}\nportal`).user.id
-		this.classes.data = html
+		let classEls =  html
 			.querySelectorAll('ul.otherSitesCategorList li.fav-sites-entry')
-			.map((value) => {
+		this.classes.data =  classEls.map((value) => {
 				let title = value.querySelector('div.fav-title a')?.getAttribute('title')
 				let id = value.querySelector('a.site-favorite-btn')?.getAttribute('data-site-id')
 				if (!id || !title) return null
-				let shortCode = title.match(/[A-ZİĞÇŞ]{3} [0-9]{1,4}/)
-				if (!shortCode) throw new Error(`Cannot parse ${title}`)
-				return {
-					id,
-					title,
-					shortCode: shortCode[0],
-				}
+
+				return new Class(id, title, this)
 			})
-			.filter((value) => value) as { id: string; title: string; shortCode: string }[]
+			.filter((value) => value) as Class[]
 
 		if (response.status === 200 || response.status === 302) return
 		else throw new Error(response.statusText)
-	}
-	async getLiveLessons(targetClass: Class): Promise<LiveLesson[]> {
-		if (!this.cookie) throw new Error('Not logged in.')
-		let data = await fetch(
-			`https://online.deu.edu.tr/direct/bbb-tool.json?siteId=${targetClass.id}`,
-			{
-				headers: {
-					cookie: this.cookie,
-				},
-				method: 'GET',
-			}
-		)
-		let result = await data.json()
-		if (result['bbb-tool_collection'] === undefined)
-			throw new Error('Could not get a proper response.')
-		return result['bbb-tool_collection']
-	}
-	async getRecordings(targetLesson: LiveLesson) {
-		if (!this.cookie) throw new Error('Not logged in.')
-		let data = await fetch(
-			`https://online.deu.edu.tr/direct/bbb-tool/${targetLesson.id}/getRecordings.json`,
-			{
-				headers: {
-					cookie: this.cookie,
-				},
-				method: 'GET',
-			}
-		)
-		let jsonData = (await data.json()) as { returncode: string; recordings: Recording[] }
-		if (jsonData.returncode !== 'SUCCESS')
-			throw new Error('Error occured while getting recordings.')
-		return jsonData.recordings
-	}
-	async populateClass(targetClass: Class): Promise<PopulatedClass> {
-		if (!this.cookie) throw new Error('Not logged in.')
-		let data = await fetch(`https://online.deu.edu.tr/direct/site/${targetClass.id}/pages.json`, {
-			headers: {
-				cookie: this.cookie,
-			},
-			method: 'GET',
-		})
-		let tools = JSON.parse(await data.text()) as ClassTool[]
-		return {
-			tools,
-			...targetClass,
-		}
 	}
 }

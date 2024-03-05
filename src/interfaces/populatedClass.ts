@@ -1,11 +1,8 @@
+import { Class } from '../classes/class'
 export interface PopulatedClass extends Class {
 	tools: ClassTool[]
 }
-export interface Class {
-	id: string
-	title: string
-	shortCode: string
-}
+
 export interface ClassTool {
 	layout: number
 	toolpopupurl?: string

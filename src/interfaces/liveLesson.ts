@@ -22,7 +22,7 @@ export interface LiveLesson {
 	reference: string
 	siteId: string
 	startDate: number
-	url: any
+	url: null | string
 	voiceBridge: number
 	waitForModerator: boolean
 	entityReference: string

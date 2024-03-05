@@ -1,25 +1,28 @@
 {
-  "name": "sakai",
+  "name": "deu-api",
   "license": "MIT",
-  "version": "0.0.1",
-  "files": ["dist"],
+  "version": "0.1.0-alpha.4",
+  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "author": {
     "name": "Umut Cevdet Koçak",
     "email": "umutcevdetkocak@gmail.com"
   },
   "scripts": {
-    "build": "rmdir /s /q .\\dist && prettier --write src/ && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc",
-    "build:cjs": "tsc --module CommonJS --outDir dist/cjs"
+    "tsc:typings": "npm-dts generate ",
+    "publish": "tsc && npm publish"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
     "node-html-parser": "^6.1.12",
     "puppeteer": "^21.5.0"
   },
-  "type": "module",
   "devDependencies": {
-    "@types/node": "^20.8.10",
-    "@changesets/cli": "^2.27.1"
+    "@changesets/cli": "^2.27.1",
+    "@types/node": "^20.8.10"
   }
 }
+
